@@ -8,15 +8,37 @@ import (
 	"strings"
 )
 
+type Command struct {
+	Command string
+}
+
 func main() {
-	fmt.Fprint(os.Stdout, "$ ")
+	start()
+}
 
-	command, err := bufio.NewReader(os.Stdin).ReadString('\n')
-	if err != nil {
-		log.Println(err)
+func start() {
+	var command Command
+	command.CommandInput()
+}
+
+func (c *Command) CommandInput() {
+	for {
+		_, _ = fmt.Fprint(os.Stdout, "$ ")
+		input, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		if err != nil {
+			log.Println(err)
+		}
+
+		c.Command = strings.Replace(input, "\n", "", 1)
+
+		c.HandleCommand()
 	}
+}
 
-	command = strings.ReplaceAll(command, "\n", "")
+func (c *Command) HandleCommand() {
+	c.NotFound()
+}
 
-	fmt.Println(command + ": command not found")
+func (c *Command) NotFound() {
+	fmt.Fprintf(os.Stderr, "%s: command not found\n", c.Command)
 }
