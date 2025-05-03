@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type Command struct {
-	Command string
+	Command    string
+	CommandArg []string
 }
 
 func main() {
@@ -36,7 +38,20 @@ func (c *Command) CommandInput() {
 }
 
 func (c *Command) HandleCommand() {
-	c.NotFound()
+	c.CommandArg = strings.Split(c.Command, " ")
+
+	switch c.CommandArg[0] {
+	case "exit":
+		c.Exit()
+	default:
+		c.NotFound()
+	}
+}
+
+func (c *Command) Exit() {
+	code, _ := strconv.Atoi(c.CommandArg[1])
+
+	os.Exit(code)
 }
 
 func (c *Command) NotFound() {
